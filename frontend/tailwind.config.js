@@ -10,6 +10,7 @@ export default {
         "./user-dashboard.html",
         "./admin-dashboard.html",
         "./sell-property.html",
+        "./aboutDev.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {

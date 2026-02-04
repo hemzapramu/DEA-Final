@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPath = window.location.pathname;
 
     // Skip navbar/footer injection on dashboard pages (they have their own layout)
-    const isDashboardPage = currentPath.includes('user-dashboard') || currentPath.includes('admin-dashboard');
+    const isDashboardPage = currentPath.includes('user-dashboard') || currentPath.includes('admin-dashboard') || currentPath.includes('agent-dashboard');
 
     if (!isDashboardPage) {
         setupNavbar();

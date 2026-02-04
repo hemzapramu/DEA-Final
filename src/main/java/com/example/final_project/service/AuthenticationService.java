@@ -60,6 +60,7 @@ public class AuthenticationService {
                                 .role(user.getRole().name())
                                 .name(user.getName())
                                 .email(user.getEmail())
+                                .agentId(user.getAgentId())
                                 .build();
         }
 }

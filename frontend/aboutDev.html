@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Meet The Dev Team - EstateManager</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Noto+Sans:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Tailwind CSS (Local Build) -->
+    <!-- Removed CDN script to avoid conflicts with Vite build -->
+
+    <style>
+        .code-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(17, 214, 97, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        .navbar-spacer {
+            height: 80px;
+        }
+
+        .hero-section {
+            position: relative;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/uploads/images/team.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            backdrop-filter: transparent;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(17, 214, 97, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 20%, rgba(17, 214, 97, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -10%;
+            right: -10%;
+            height: 200px;
+            background: linear-gradient(to top, #000 0%, transparent 100%);
+            border-radius: 50% 50% 0 0;
+            pointer-events: none;
+        }
+
+        /* Team Link Tooltip Styles */
+        .team-title-link {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .team-title-link .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #183426 0%, #102219 100%);
+            border: 1px solid #11d661;
+            border-radius: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(17, 214, 97, 0.2);
+        }
+
+        .team-title-link .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #11d661;
+        }
+
+        .team-title-link .tooltip-text {
+            color: #11d661;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-title-link .tooltip-text .material-symbols-outlined {
+            font-size: 18px;
+            animation: bounceRight 1s infinite;
+        }
+
+        @keyframes bounceRight {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+        .team-title-link:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .team-title-link:hover h2 {
+            color: #11d661;
+        }
+
+        /* Transition Overlay Styles */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+        }
+
+        .page-transition-overlay.active {
+            pointer-events: all;
+        }
+
+        .transition-panel {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #102219 0%, #183426 100%);
+            transform: scaleX(0);
+            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .transition-panel.left {
+            transform-origin: left;
+        }
+
+        .transition-panel.right {
+            transform-origin: right;
+        }
+
+        .page-transition-overlay.active .transition-panel {
+            transform: scaleX(1);
+        }
+
+        .page-transition-overlay.exit .transition-panel {
+            transform: scaleX(0);
+        }
+
+        .page-transition-overlay.exit .transition-panel.left {
+            transform-origin: right;
+        }
+
+        .page-transition-overlay.exit .transition-panel.right {
+            transform-origin: left;
+        }
+
+        .transition-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.4s;
+            z-index: 10000;
+        }
+
+        .page-transition-overlay.active .transition-content {
+            opacity: 1;
+        }
+
+        .page-transition-overlay.exit .transition-content {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .transition-code {
+            font-family: 'Courier New', monospace;
+            color: #11d661;
+            font-size: 14px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .transition-code .comment {
+            color: #6a737d;
+        }
+
+        .transition-code .keyword {
+            color: #ff79c6;
+        }
+
+        .transition-code .string {
+            color: #f1fa8c;
+        }
+
+        .transition-code .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #11d661;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .transition-loading-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 24px;
+            letter-spacing: 2px;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+
+            25% {
+                content: '.';
+            }
+
+            50% {
+                content: '..';
+            }
+
+            75% {
+                content: '...';
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-slate-900 dark:text-white font-display overflow-x-hidden antialiased">
+    <div id="navbar"></div>
+
+    <main class="flex flex-1 justify-center py-5">
+        <div class="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10 gap-16">
+            <section>
+                <div class="sm:p-4">
+
+                    <div
+                        class="hero-section flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat sm:gap-8 sm:rounded-xl items-center justify-center px-4 py-20 text-center relative overflow-hidden group">
+
+
+                        <div
+                            class="absolute inset-0 opacity-20 pointer-events-none overflow-hidden select-none font-mono text-[10px] text-primary/40 leading-tight flex flex-wrap content-start p-2 gap-4">
+                            <div>const architecture = () =&gt; { return "Scaleable"; }</div>
+                            <div>while(dev) { ship_code(); }</div>
+                            <div>&lt;EstateManager /&gt;</div>
+                            <div>SELECT * FROM properties WHERE status='AVAILABLE';</div>
+                            <div>void main() { System.out.println("Building excellence"); }</div>
+                            <div>import { React, Spring } from 'ModernStack';</div>
+                            <div>const api_version = "v2.0.4";</div>
+                            <div>docker-compose up -d --build</div>
+                            <div>git commit -m "Optimize performance layer"</div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
+                        <div class="relative z-10 flex flex-col gap-4 max-w-3xl items-center">
+                            <div data-aos="fade-down"
+                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+                                <span class="size-2 rounded-full bg-primary animate-pulse"></span>
+                                Engineering Excellence
+                            </div>
+                            <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] sm:text-6xl"
+                                data-aos="fade-up" data-aos-delay="100">
+                                Meet the Developers Behind <span class="text-primary">EstateManager</span>
+                            </h1>
+                            <h2 class="text-gray-300 text-lg font-normal leading-relaxed max-w-2xl" data-aos="fade-up"
+                                data-aos-delay="200">
+                                A collective of software engineers, architects, and designers dedicated to building the
+                                highest-performance property management ecosystem in the industry.
+                            </h2>
+                            <div class="flex gap-4 pt-6" data-aos="fade-up" data-aos-delay="300">
+                                <a href="https://github.com/hemalkph/Final_Project" target="_blank"
+                                    class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-black text-base font-bold hover:brightness-110 transition-all">
+                                    <span class="truncate">View GitHub</span>
+                                </a>
+                                <button
+                                    class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-transparent border border-white/20 text-white text-base font-bold hover:border-primary transition-all">
+                                    <span class="truncate">Documentation</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col gap-10 py-6">
+                <div class="flex flex-col gap-2" data-aos="fade-right">
+                    <h2 class="text-white text-3xl font-bold tracking-tight">Our Technology Stack</h2>
+                    <p class="text-gray-400">The battle-tested tools we use to power EstateManager.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div data-aos="fade-up" data-aos-delay="0"
+                        class="flex flex-col gap-4 rounded-xl border border-border-dark bg-surface-dark p-6 hover:border-primary transition-all group">
+                        <div
+                            class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                            <span class="material-symbols-outlined text-3xl">laptop_mac</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-xl font-bold mb-3">Frontend</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">REACT</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">TAILWIND</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">TYPESCRIPT</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="100"
+                        class="flex flex-col gap-4 rounded-xl border border-border-dark bg-surface-dark p-6 hover:border-primary transition-all group">
+                        <div
+                            class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                            <span class="material-symbols-outlined text-3xl">settings_ethernet</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-xl font-bold mb-3">Backend</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">SPRING
+                                    BOOT</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">JAVA</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">REST
+                                    API</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="200"
+                        class="flex flex-col gap-4 rounded-xl border border-border-dark bg-surface-dark p-6 hover:border-primary transition-all group">
+                        <div
+                            class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                            <span class="material-symbols-outlined text-3xl">database</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-xl font-bold mb-3">Database</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">MYSQL</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">REDIS</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">HIBERNATE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="300"
+                        class="flex flex-col gap-4 rounded-xl border border-border-dark bg-surface-dark p-6 hover:border-primary transition-all group">
+                        <div
+                            class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                            <span class="material-symbols-outlined text-3xl">cloud_done</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-xl font-bold mb-3">DevOps</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">DOCKER</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">AWS</span>
+                                <span
+                                    class="px-2 py-1 bg-black rounded text-[10px] font-bold text-gray-300 border border-border-dark">CI/CD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col gap-8 py-6">
+                <div class="flex flex-col gap-3">
+                    <div class="team-title-link" id="realTeamLink" onclick="navigateWithTransition('/about.html')">
+                        <div class="tooltip">
+                            <span class="tooltip-text">
+                                <span class="material-symbols-outlined">groups</span>
+                                Meet the Real Team
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </span>
+                        </div>
+                        <h2
+                            class="text-white text-3xl font-bold leading-tight tracking-[-0.015em] transition-colors duration-300">
+                            Meet The Architect Team</h2>
+                    </div>
+                    <div class="h-1 w-20 bg-primary rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div data-aos="flip-left" data-aos-delay="0"
+                        class="flex flex-col items-center text-center gap-4 group p-6 bg-surface-dark/50 rounded-xl border border-border-dark hover:border-primary/50 transition-all">
+                        <div class="relative">
+                            <div
+                                class="w-32 h-32 rounded-xl overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors duration-300">
+                                <img alt="James"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    src="/uploads/images/hDev.png" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-white text-lg font-bold">Hemal Pramuditha</h3>
+                            <p class="text-primary text-xs font-bold uppercase tracking-wider">Lead Fullstack Dev</p>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">Worked on: Core API architecture and
+                                real-time payment gateway.</p>
+                        </div>
+                        <div class="flex gap-4 mt-2">
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">terminal</span></a>
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">share</span></a>
+                        </div>
+                    </div>
+                    <div data-aos="flip-left" data-aos-delay="100"
+                        class="flex flex-col items-center text-center gap-4 group p-6 bg-surface-dark/50 rounded-xl border border-border-dark hover:border-primary/50 transition-all">
+                        <div class="relative">
+                            <div
+                                class="w-32 h-32 rounded-xl overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors duration-300">
+                                <img alt="Sarah"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    src="/uploads/images/iDev.png" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-white text-lg font-bold">Ishan Ranaweera</h3>
+                            <p class="text-primary text-xs font-bold uppercase tracking-wider">Frontend Specialist</p>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">Worked on: Dynamic property dashboard
+                                and interactive map UI.</p>
+                        </div>
+                        <div class="flex gap-4 mt-2">
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">terminal</span></a>
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">share</span></a>
+                        </div>
+                    </div>
+                    <div data-aos="flip-left" data-aos-delay="200"
+                        class="flex flex-col items-center text-center gap-4 group p-6 bg-surface-dark/50 rounded-xl border border-border-dark hover:border-primary/50 transition-all">
+                        <div class="relative">
+                            <div
+                                class="w-32 h-32 rounded-xl overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors duration-300">
+                                <img alt="David"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuARt4E6J7IGIqewNhhA54UvwnUPh7M3z4BkzhOmoe2XT7XKr7bwm-EIrqrGybyoLbWpwApaSDlQC_nWGIftT9s5bSFYvC5qVwzSDFc1vGuQsAj9wltxWTeIGbPSBAvHpasMBy5SzNqT5iKlTVH3u5kYz3eY0dYELYpJ4wiSu9fjj44pyTMtpRRmTOkrPIE5U5N213P9id3rp3NPl0iTkkousaiTS0fE_qIjV7TT7Ztjayj_rnHMIJDgIPR3dYi1fbNEidLVQbvsptQ" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-white text-lg font-bold">David Okonjo</h3>
+                            <p class="text-primary text-xs font-bold uppercase tracking-wider">Backend Engineer</p>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">Worked on: Data encryption layers and
+                                high-volume MySQL optimization.</p>
+                        </div>
+                        <div class="flex gap-4 mt-2">
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">terminal</span></a>
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">share</span></a>
+                        </div>
+                    </div>
+                    <div data-aos="flip-left" data-aos-delay="300"
+                        class="flex flex-col items-center text-center gap-4 group p-6 bg-surface-dark/50 rounded-xl border border-border-dark hover:border-primary/50 transition-all">
+                        <div class="relative">
+                            <div
+                                class="w-32 h-32 rounded-xl overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors duration-300">
+                                <img alt="Emily"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc8HiomsbvE9Z6m_AClla4jGzytnViDOzhtg0rT9P7os31VYhGK693Ntgl2kVYAvbVNIN_TbN4FISP-0EY084Ce985cJLm4x_nBOujxP07FvcTbl5Pyk6SlAeyy6DVSqM-MI8YVnFRvOxRZqlVgJW0COu_ezYe_Zc4bdPSDykFYsJHlGP-efyAgDZCg8Mge-sWJVsB_UB_CaxLNj8UaPj4RoyVagurq2vid-YzlWc_OwqZBQasa398ULB-i3SFt3r1hM6Uw04Bg5A" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-white text-lg font-bold">Emily Rodriguez</h3>
+                            <p class="text-primary text-xs font-bold uppercase tracking-wider">DevOps Engineer</p>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">Worked on: Automated scaling on AWS
+                                and zero-downtime deployment.</p>
+                        </div>
+                        <div class="flex gap-4 mt-2">
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">terminal</span></a>
+                            <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                                    class="material-symbols-outlined text-xl">share</span></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col gap-10 py-6">
+                <div class="flex flex-col gap-4 text-center items-center" data-aos="zoom-in">
+                    <h2 class="text-white text-3xl font-bold sm:text-4xl">Our Engineering Philosophy</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div data-aos="fade-up" data-aos-delay="0"
+                        class="flex flex-1 gap-4 rounded-xl border border-border-dark bg-surface-dark p-8 flex-col hover:border-primary/40 transition-all group">
+                        <div
+                            class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                            <span class="material-symbols-outlined text-3xl">data_object</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-xl font-bold">Clean Code</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                We prioritize maintainability and readability. Our code is peer-reviewed and follows
+                                strict SOLID principles to ensure long-term stability.
+                            </p>
+                        </div>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="100"
+                        class="flex flex-1 gap-4 rounded-xl border border-border-dark bg-surface-dark p-8 flex-col hover:border-primary/40 transition-all group">
+                        <div
+                            class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                            <span class="material-symbols-outlined text-3xl">enhanced_encryption</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-xl font-bold">Security First</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Financial and personal data require zero-trust architecture. We implement end-to-end
+                                encryption and regular penetration testing.
+                            </p>
+                        </div>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="200"
+                        class="flex flex-1 gap-4 rounded-xl border border-border-dark bg-surface-dark p-8 flex-col hover:border-primary/40 transition-all group">
+                        <div
+                            class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                            <span class="material-symbols-outlined text-3xl">devices</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-xl font-bold">UX Mindset</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Performance is a feature. We optimize for sub-second load times and intuitive flows,
+                                bridging the gap between design and code.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col gap-8 py-6">
+                <div class="flex flex-col gap-2" data-aos="fade-right">
+                    <h2 class="text-white text-3xl font-bold">System Contributions</h2>
+                    <p class="text-gray-400">Key modules and architectural pieces shipped by our team.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="0">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">Auth System (OAuth2/JWT)</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="50">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">Property Listing Engine</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="100">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">Admin Intelligence Dashboard</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="150">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">Financial Transaction Ledger</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="200">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">Real-time Messaging Socket</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 border border-border-dark bg-surface-dark rounded-lg"
+                        data-aos="fade-up" data-aos-delay="250">
+                        <div class="size-2 bg-primary rounded-full"></div>
+                        <span class="text-white font-medium">AWS Cloud Formation Templates</span>
+                    </div>
+                </div>
+            </section>
+            <section class="py-10">
+                <div data-aos="zoom-in"
+                    class="w-full bg-gradient-to-r from-surface-dark to-black border border-border-dark rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                    <div
+                        class="absolute -top-24 -right-24 w-64 h-64 bg-primary blur-[120px] opacity-10 pointer-events-none">
+                    </div>
+                    <div class="flex flex-col gap-4 relative z-10">
+                        <h2 class="text-white text-3xl font-black leading-tight tracking-tight">
+                            Contact the Dev Team
+                        </h2>
+                        <p class="text-gray-400 text-base max-w-md">
+                            Spotted a bug or have a feature request? Our engineering team is always listening to user
+                            feedback.
+                        </p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4 relative z-10 w-full md:w-auto">
+                        <button
+                            class="flex-1 md:flex-none flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-black text-base font-bold hover:brightness-110 transition-all">
+                            Report a Bug
+                        </button>
+                        <button
+                            class="flex-1 md:flex-none flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-transparent border border-border-dark text-white text-base font-bold hover:border-primary transition-all">
+                            Request a Feature
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: false,
+            offset: 50,
+            easing: 'ease-out-cubic',
+            mirror: true
+        });
+    </script>
+
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay" id="pageTransition">
+        <div class="transition-panel left"></div>
+        <div class="transition-panel right"></div>
+        <div class="transition-content">
+            <div class="transition-code">
+                <div><span class="comment">// Loading team portal...</span></div>
+                <div><span class="keyword">import</span> { realTeam } <span class="keyword">from</span> <span
+                        class="string">'@team/core'</span>;</div>
+                <div><span class="keyword">await</span> realTeam.connect();<span class="cursor"></span></div>
+            </div>
+            <div class="transition-loading-text">
+                <span>CONNECTING</span><span class="loading-dots"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateWithTransition(targetUrl) {
+            const overlay = document.getElementById('pageTransition');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1200);
+        }
+
+        // Check if coming from transition (add exit animation)
+        window.addEventListener('pageshow', function (event) {
+            const overlay = document.getElementById('pageTransition');
+            if (overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                overlay.classList.add('exit');
+                setTimeout(() => {
+                    overlay.classList.remove('exit');
+                }, 600);
+            }
+        });
+    </script>
+</body>
+
+</html>

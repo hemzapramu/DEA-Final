@@ -34,6 +34,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Links user to Agent profile (if user is an agent)
+    private Long agentId;
+
     @Builder.Default
     private boolean enabled = true;
 

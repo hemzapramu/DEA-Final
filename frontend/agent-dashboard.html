@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Agent Dashboard - Spring Realty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d661", // Spring Green
+                        "background-dark": "#050505", // Deep Charcoal
+                        "card-dark": "#111111", // Dark Gray Surface
+                        "border-dark": "#222222",
+                        "text-secondary": "#9ca3af", // Light Gray
+                    },
+                    fontFamily: {
+                        "sans": ["Manrope", "sans-serif"],
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white overflow-hidden h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 flex flex-col h-full bg-[#050505] border-r border-border-dark flex-shrink-0">
+        <div class="p-6">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-green-800 flex items-center justify-center text-black font-bold">
+                    SR</div>
+                <div class="flex flex-col">
+                    <h1 class="text-white text-base font-bold leading-normal">Spring Realty</h1>
+                    <p class="text-gray-400 text-xs font-normal">Agent Portal</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex flex-col gap-2 px-4 mt-4 overflow-y-auto flex-1">
+            <a href="#" id="navOverview" onclick="showView('overview'); return false;"
+                class="nav-item flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/20 text-primary border-l-4 border-primary">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-medium">Overview</span>
+            </a>
+            <a href="#" id="navProperties" onclick="showView('properties'); return false;"
+                class="nav-item flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">home_work</span>
+                <span class="text-sm font-medium">Properties</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">group</span>
+                <span class="text-sm font-medium">Leads</span>
+            </a>
+            <a href="/inquiry-chat.html"
+                class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <span class="text-sm font-medium">Messages</span>
+                <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Schedule</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+                <span class="text-sm font-medium">Earnings</span>
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border-dark">
+            <div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
+                id="profile-trigger">
+                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold"
+                    id="sidebar-avatar">A</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate" id="sidebar-name">Alex Spring</p>
+                    <p class="text-xs text-gray-500 truncate">Senior Associate</p>
+                </div>
+                <span class="material-symbols-outlined text-gray-400 text-sm">expand_more</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto bg-black relative">
+        <div id="overviewView" class="flex flex-col max-w-[1400px] w-full mx-auto p-6 md:p-10 gap-8">
+
+            <!-- Header -->
+            <header class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">Dashboard Overview</h1>
+                    <p class="text-gray-400 mt-1">Welcome back, <span id="header-name">Alex</span>. Here's what's
+                        happening today.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        class="flex items-center justify-center w-10 h-10 rounded-full bg-[#111] border border-white/10 hover:border-primary text-gray-400 hover:text-primary transition-colors relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+                    </button>
+                    <button id="btn-new-listing"
+                        class="bg-primary hover:bg-green-400 text-black px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        New Listing
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-card-dark border border-border-dark p-6 rounded-xl flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                            <span class="material-symbols-outlined">group_add</span>
+                        </div>
+                        <span class="text-xs text-green-500 flex items-center gap-1">+12% <span
+                                class="material-symbols-outlined text-[10px]">arrow_upward</span></span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mt-2">12</h3>
+                    <p class="text-gray-400 text-sm">New Leads</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-card-dark border border-border-dark p-6 rounded-xl flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">home</span>
+                        </div>
+                        <span class="text-xs text-gray-500">Active</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mt-2">45</h3>
+                    <p class="text-gray-400 text-sm">Active Listings</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-card-dark border border-border-dark p-6 rounded-xl flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                            <span class="material-symbols-outlined">pending_actions</span>
+                        </div>
+                        <span class="text-xs text-red-500 flex items-center gap-1">-2% <span
+                                class="material-symbols-outlined text-[10px]">arrow_downward</span></span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mt-2">8</h3>
+                    <p class="text-gray-400 text-sm">Pending Inquiries</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-card-dark border border-border-dark p-6 rounded-xl flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-500">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <span class="text-xs text-green-500 flex items-center gap-1">+5% <span
+                                class="material-symbols-outlined text-[10px]">arrow_upward</span></span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mt-2">24</h3>
+                    <p class="text-gray-400 text-sm">Closed Deals</p>
+                </div>
+            </div>
+
+            <!-- Content Grid: Analytics + Schedule -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Analytics Chart -->
+                <div class="lg:col-span-2 bg-card-dark border border-border-dark rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-white">Performance Analytics</h3>
+                        <select class="bg-[#222] border-none text-xs text-gray-400 rounded-lg px-2 py-1 outline-none">
+                            <option>This Week</option>
+                            <option>This Month</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="flex gap-8 mb-6 border-b border-border-dark pb-6">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Avg. Response</p>
+                            <p class="text-xl font-bold text-white">14m</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Conversion Rate</p>
+                            <p class="text-xl font-bold text-white">68%</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Success Rate</p>
+                            <p class="text-xl font-bold text-white">92%</p>
+                        </div>
+                    </div>
+
+                    <div class="h-64 w-full">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Schedule -->
+                <div class="bg-card-dark border border-border-dark rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-white">Today's Schedule</h3>
+                        <a href="#" class="text-xs text-primary hover:underline">View All</a>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <!-- Item 1 -->
+                        <div class="flex gap-3 hover:bg-white/5 p-2 rounded-lg transition-colors cursor-pointer">
+                            <div
+                                class="flex flex-col items-center justify-center w-12 bg-[#222] rounded-lg border border-border-dark h-12 shrink-0">
+                                <span class="text-[10px] text-gray-400 uppercase font-bold">Oct</span>
+                                <span class="text-lg font-bold text-white leading-none">24</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Property Viewing: Oak Ridge</h4>
+                                <p class="text-xs text-gray-400">10:00 AM - 11:30 AM</p>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="flex gap-3 hover:bg-white/5 p-2 rounded-lg transition-colors cursor-pointer">
+                            <div
+                                class="flex flex-col items-center justify-center w-12 bg-[#222] rounded-lg border border-border-dark h-12 shrink-0">
+                                <span class="text-[10px] text-gray-400 uppercase font-bold">Oct</span>
+                                <span class="text-lg font-bold text-white leading-none">24</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Closing Call with Sarah M.</h4>
+                                <p class="text-xs text-gray-400">02:00 PM - 02:45 PM</p>
+                            </div>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="flex gap-3 hover:bg-white/5 p-2 rounded-lg transition-colors cursor-pointer">
+                            <div
+                                class="flex flex-col items-center justify-center w-12 bg-[#222] rounded-lg border border-border-dark h-12 shrink-0">
+                                <span class="text-[10px] text-gray-400 uppercase font-bold">Oct</span>
+                                <span class="text-lg font-bold text-white leading-none">24</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Listing Presentation: Sky Loft</h4>
+                                <p class="text-xs text-gray-400">04:00 PM - 05:30 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Leads Section -->
+            <div class="bg-card-dark border border-border-dark rounded-xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white">Recent Leads</h3>
+                    <button class="text-xs text-gray-400 hover:text-white">View All Leads</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-white/5 text-gray-200 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 rounded-l-lg">Name</th>
+                                <th class="px-4 py-3">Inquiry Type</th>
+                                <th class="px-4 py-3">Property</th>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 rounded-r-lg">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border-dark">
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-xs">
+                                        JD</div>
+                                    <span class="text-white font-medium">John Doe</span>
+                                </td>
+                                <td class="px-4 py-3">Buying</td>
+                                <td class="px-4 py-3">Luxury Villa</td>
+                                <td class="px-4 py-3">Today, 9:20 AM</td>
+                                <td class="px-4 py-3"><span
+                                        class="bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded text-xs font-bold">New</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <button class="text-primary hover:text-white transition-colors">Contact</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="px-4 py-3 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-500 flex items-center justify-center font-bold text-xs">
+                                        AS</div>
+                                    <span class="text-white font-medium">Alice Smith</span>
+                                </td>
+                                <td class="px-4 py-3">Selling</td>
+                                <td class="px-4 py-3">Downtown Apt</td>
+                                <td class="px-4 py-3">Yesterday</td>
+                                <td class="px-4 py-3"><span
+                                        class="bg-blue-500/10 text-blue-500 px-2 py-1 rounded text-xs font-bold">Contacted</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <button class="text-primary hover:text-white transition-colors">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="h-10"></div>
+        </div>
+
+        <!-- ==================== PROPERTIES VIEW ==================== -->
+        <div id="propertiesView" class="hidden flex-1 flex flex-col gap-6 p-6 md:p-8 overflow-y-auto">
+            <header class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">My Properties</h1>
+                    <p class="text-gray-400 mt-1">Manage your property listings</p>
+                </div>
+                <div class="flex gap-3">
+                    <button id="btn-add-property"
+                        class="bg-primary hover:bg-green-400 text-black px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        Add Property
+                    </button>
+                </div>
+            </header>
+
+            <!-- Properties Table -->
+            <div class="bg-card-dark border border-border-dark rounded-xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white">Property Listings</h3>
+                    <span id="propertiesCount" class="text-sm text-gray-400">0 properties</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-white/5 text-gray-200 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 rounded-l-lg">Property</th>
+                                <th class="px-4 py-3">Price</th>
+                                <th class="px-4 py-3">Type</th>
+                                <th class="px-4 py-3">Location</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 rounded-r-lg">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="propertiesTableBody" class="divide-y divide-border-dark">
+                            <!-- Populated by JS -->
+                            <tr id="propertiesLoading">
+                                <td colspan="6" class="px-4 py-12 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div
+                                            class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-3">
+                                        </div>
+                                        <span class="text-gray-400">Loading properties...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="listing-modal"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div
+            class="bg-[#111] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-[#222] shadow-2xl relative">
+            <button id="btn-close-modal"
+                class="absolute top-4 right-4 text-gray-400 hover:text-white z-10 p-2 rounded-full hover:bg-white/10 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-white">List Your Property</h2>
+                    <p class="text-gray-400">Fill out details below for review.</p>
+                </div>
+                <form id="dashboardListingForm" class="space-y-6">
+                    <!-- Basic Info -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary/20 flex items-center justify-center text-primary text-xs">1</span>
+                            Basic Info
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                                <select id="dashboardPropertyType" required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                    <option value="" class="bg-[#111]">Select Type</option>
+                                    <option value="HOUSE" class="bg-[#111]">House</option>
+                                    <option value="APARTMENT" class="bg-[#111]">Apartment</option>
+                                    <option value="LAND" class="bg-[#111]">Land</option>
+                                    <option value="COMMERCIAL" class="bg-[#111]">Commercial</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Price (LKR)</label>
+                                <input type="number" id="dashboardPropertyPrice" required placeholder="e.g 25000000"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Address</label>
+                                <input type="text" id="dashboardPropertyAddress" required placeholder="Full Address"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Title</label>
+                                <input type="text" id="dashboardPropertyTitle" required placeholder="Property Title"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                                <textarea id="dashboardPropertyDescription" rows="3" placeholder="Description..."
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary/20 flex items-center justify-center text-primary text-xs">2</span>
+                            Details
+                        </h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div><label class="block text-xs font-medium text-gray-400 mb-1">Beds</label><input
+                                    type="number" id="dashboardBedrooms" placeholder="0"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div><label class="block text-xs font-medium text-gray-400 mb-1">Baths</label><input
+                                    type="number" id="dashboardBathrooms" placeholder="0"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div><label class="block text-xs font-medium text-gray-400 mb-1">SqFt</label><input
+                                    type="number" id="dashboardAreaSqFt" placeholder="0"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                        </div>
+                        <!-- Amenities Checkboxes -->
+                        <div class="col-span-full">
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Amenities</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Pool"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Pool</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Gym"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Gym</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Parking"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Parking</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Garden"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Garden</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Security"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Security</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="AC"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">AC</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Furnished"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Furnished</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        name="amenities" value="Balcony"
+                                        class="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"><span
+                                        class="text-sm text-gray-300">Balcony</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent -->
+                    <div class="space-y-4 hidden">
+                        <!-- Hidden Agent Select logic managed by JS -->
+                        <select name="agent" id="dashboardAgentSelect" class="w-full hidden">
+                        </select>
+                    </div>
+
+                    <!-- Photos -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary/20 flex items-center justify-center text-primary text-xs">4</span>
+                            Photos
+                        </h3>
+                        <div id="dashboardDropZone"
+                            class="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer bg-white/5">
+                            <p class="text-gray-400 mb-2">Drag & Drop Photos</p>
+                            <input type="file" id="dashboardPropertyImages" multiple accept="image/*" class="hidden">
+                            <button type="button" onclick="document.getElementById('dashboardPropertyImages').click()"
+                                class="bg-white/10 text-white px-4 py-2 rounded-lg text-sm hover:bg-white/20">Select
+                                Files</button>
+                        </div>
+                        <div id="dashboardImagePreviewContainer" class="grid grid-cols-4 gap-2"></div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary/20 flex items-center justify-center text-primary text-xs">5</span>
+                            Contact
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-gray-400 mb-1">Name</label><input
+                                    type="text" id="dashboardContactName" required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div><label class="block text-sm font-medium text-gray-400 mb-1">Phone</label><input
+                                    type="tel" id="dashboardContactPhone" required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="md:col-span-2"><label
+                                    class="block text-sm font-medium text-gray-400 mb-1">Email</label><input
+                                    type="email" id="dashboardContactEmail" required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10">
+                        <button type="submit"
+                            class="w-full py-3 bg-primary text-black font-bold rounded-xl hover:bg-green-400 transition-colors shadow-lg shadow-primary/20">Submit
+                            Listing</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/agent-dashboard.js"></script>
+</body>
+
+</html>

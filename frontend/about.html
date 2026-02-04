@@ -51,6 +51,218 @@
         .navbar-spacer {
             height: 80px;
         }
+
+        /* Team Link Tooltip Styles */
+        .team-title-link {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .team-title-link .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #11d661;
+            border-radius: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(17, 214, 97, 0.2);
+        }
+
+        .team-title-link .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #11d661;
+        }
+
+        .team-title-link .tooltip-text {
+            color: #11d661;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-title-link .tooltip-text .material-symbols-outlined {
+            font-size: 18px;
+            animation: bounceRight 1s infinite;
+        }
+
+        @keyframes bounceRight {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+        .team-title-link:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .team-title-link:hover h2 {
+            color: #11d661;
+        }
+
+        /* Transition Overlay Styles */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+        }
+
+        .page-transition-overlay.active {
+            pointer-events: all;
+        }
+
+        .transition-panel {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            transform: scaleX(0);
+            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .transition-panel.left {
+            transform-origin: left;
+        }
+
+        .transition-panel.right {
+            transform-origin: right;
+        }
+
+        .page-transition-overlay.active .transition-panel {
+            transform: scaleX(1);
+        }
+
+        .page-transition-overlay.exit .transition-panel {
+            transform: scaleX(0);
+        }
+
+        .page-transition-overlay.exit .transition-panel.left {
+            transform-origin: right;
+        }
+
+        .page-transition-overlay.exit .transition-panel.right {
+            transform-origin: left;
+        }
+
+        .transition-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.4s;
+            z-index: 10000;
+        }
+
+        .page-transition-overlay.active .transition-content {
+            opacity: 1;
+        }
+
+        .page-transition-overlay.exit .transition-content {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .transition-code {
+            font-family: 'Courier New', monospace;
+            color: #11d661;
+            font-size: 14px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .transition-code .comment {
+            color: #6a737d;
+        }
+
+        .transition-code .keyword {
+            color: #ff79c6;
+        }
+
+        .transition-code .string {
+            color: #f1fa8c;
+        }
+
+        .transition-code .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #11d661;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .transition-loading-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 24px;
+            letter-spacing: 2px;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+
+            25% {
+                content: '.';
+            }
+
+            50% {
+                content: '..';
+            }
+
+            75% {
+                content: '...';
+            }
+        }
     </style>
 </head>
 
@@ -64,7 +276,7 @@
             <section class="@container" data-aos="fade-up">
                 <div class="@[480px]:p-4">
                     <div class="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-lg items-start justify-end px-4 pb-10 @[480px]:px-10 relative overflow-hidden group"
-                        style='background-image: linear-gradient(rgba(16, 34, 25, 0.4) 0%, rgba(16, 34, 25, 0.9) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB_oasQQ-Verj948mU_RYVlXFNgt-ilgFfr9pkPpWHh2QMXrbeA_GXyh56F1JpSBrTtULI2sq3SmOyg70h-Gm3Jndep-kOGRXDujEYo2FAZ5WPlb7PsC8upgkIBG7ToM7m2rKvDCbXB7f7hVMqRZ9ZObJzSiidYSvIxkNgMy8lop29OIOMfWHIlBkUQkzoyLpgUf4v1yP3ogDlybRjrx8tZQVQv_chVKOB7b1TQT0U3XfVvbWAKwMDtltczypz3KbmUmzgVPUKL-Eo");'>
+                        style='background-image: linear-gradient(rgba(16, 34, 25, 0.4) 0%, rgba(16, 34, 25, 0.9) 100%), url("/uploads/images/adgent.png");'>
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-90">
                         </div>
@@ -90,54 +302,55 @@
 
             <!-- Our Story Section -->
             <section class="w-full py-10 md:py-20" data-aos="fade-up">
-    <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16">
-        
-        <div class="w-full md:w-1/2">
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-border-dark/50 group">
-                <img 
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000" 
-                    alt="Modern office meeting room" 
-                    class="w-full aspect-[4/3] object-cover transform group-hover:scale-105 transition-transform duration-700"
-                >
-                <div class="absolute inset-0 bg-background-dark/10"></div>
-            </div>
-        </div>
+                <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16">
 
-        <div class="w-full md:w-1/2 flex flex-col gap-6">
-            
-            <div class="flex items-center gap-3">
-                <div class="h-0.5 w-8 bg-primary"></div>
-                <span class="text-primary font-bold uppercase tracking-widest text-sm">Our Story</span>
-            </div>
+                    <div class="w-full md:w-1/2">
+                        <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-border-dark/50 group">
+                            <img src="/uploads/images/newlook.jpg"
+                                alt="Modern office meeting room"
+                                class="w-full aspect-[4/3] object-cover transform group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-background-dark/10"></div>
+                        </div>
+                    </div>
 
-            <h2 class="text-white text-3xl md:text-5xl font-black leading-tight tracking-tight">
-                Bridging the gap between real estate and technology.
-            </h2>
+                    <div class="w-full md:w-1/2 flex flex-col gap-6">
 
-            <div class="flex flex-col gap-4 text-gray-400 text-base md:text-lg leading-relaxed">
-                <p>
-                    Founded in 2018, EstateManager began with a simple mission: to eliminate the inefficiencies 
-                    that plague traditional property management. We realized that landlords needed more than 
-                    just a spreadsheet—they needed an intelligent partner.
-                </p>
-                <p>
-                    Today, we provide transparency, automation, and peace of mind to thousands of property 
-                    owners worldwide, turning complex portfolios into streamlined successes.
-                </p>
-            </div>
+                        <div class="flex items-center gap-3">
+                            <div class="h-0.5 w-8 bg-primary"></div>
+                            <span class="text-primary font-bold uppercase tracking-widest text-sm">Our Story</span>
+                        </div>
 
-            <div class="pt-2">
-                <a href="#" class="group inline-flex items-center gap-2 text-primary font-bold hover:text-white transition-colors duration-300">
-                    <span>Read Full Journey</span>
-                    <span class="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform duration-300">
-                        arrow_forward
-                    </span>
-                </a>
-            </div>
-        </div>
+                        <h2 class="text-white text-3xl md:text-5xl font-black leading-tight tracking-tight">
+                            Bridging the gap between real estate and technology.
+                        </h2>
 
-    </div>
-</section>
+                        <div class="flex flex-col gap-4 text-gray-400 text-base md:text-lg leading-relaxed">
+                            <p>
+                                Founded in 2018, EstateManager began with a simple mission: to eliminate the
+                                inefficiencies
+                                that plague traditional property management. We realized that landlords needed more than
+                                just a spreadsheet—they needed an intelligent partner.
+                            </p>
+                            <p>
+                                Today, we provide transparency, automation, and peace of mind to thousands of property
+                                owners worldwide, turning complex portfolios into streamlined successes.
+                            </p>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="#"
+                                class="group inline-flex items-center gap-2 text-primary font-bold hover:text-white transition-colors duration-300">
+                                <span>Read Full Journey</span>
+                                <span
+                                    class="material-symbols-outlined text-xl group-hover:translate-x-2 transition-transform duration-300">
+                                    arrow_forward
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
 
             <!-- Stats Section -->
             <section class="w-full bg-surface-dark/30 rounded-2xl border border-border-dark p-8 md:p-12"
@@ -227,7 +440,18 @@
             <!-- Meet the Team -->
             <section class="flex flex-col gap-8 py-6" data-aos="fade-up">
                 <div class="flex flex-col gap-3">
-                    <h2 class="text-white text-3xl font-bold leading-tight tracking-[-0.015em]">Meet the Team</h2>
+                    <div class="team-title-link" id="devTeamLink" onclick="navigateWithTransition('/aboutDev.html')">
+                        <div class="tooltip">
+                            <span class="tooltip-text">
+                                <span class="material-symbols-outlined">terminal</span>
+                                Meet The Architect Team
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </span>
+                        </div>
+                        <h2
+                            class="text-white text-3xl font-bold leading-tight tracking-[-0.015em] transition-colors duration-300">
+                            Meet the Real Team</h2>
+                    </div>
                     <div class="h-1 w-20 bg-primary rounded-full"></div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="teamSection">
@@ -379,6 +603,46 @@
             once: true,
             offset: 50,
             easing: 'ease-out-cubic'
+        });
+    </script>
+
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay" id="pageTransition">
+        <div class="transition-panel left"></div>
+        <div class="transition-panel right"></div>
+        <div class="transition-content">
+            <div class="transition-code">
+                <div><span class="comment">// Loading developer portal...</span></div>
+                <div><span class="keyword">import</span> { architects } <span class="keyword">from</span> <span
+                        class="string">'@team/dev'</span>;</div>
+                <div><span class="keyword">await</span> architects.initialize();<span class="cursor"></span></div>
+            </div>
+            <div class="transition-loading-text">
+                <span>INITIALIZING</span><span class="loading-dots"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateWithTransition(targetUrl) {
+            const overlay = document.getElementById('pageTransition');
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1200);
+        }
+
+        // Check if coming from transition (add exit animation)
+        window.addEventListener('pageshow', function (event) {
+            const overlay = document.getElementById('pageTransition');
+            if (overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                overlay.classList.add('exit');
+                setTimeout(() => {
+                    overlay.classList.remove('exit');
+                }, 600);
+            }
         });
     </script>
 </body>
