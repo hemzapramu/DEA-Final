@@ -79,6 +79,26 @@ public class InquiryService {
     }
 
     /**
+     * Get a single inquiry by ID (user access).
+     */
+    public InquiryDTO getInquiryById(Long inquiryId) {
+        User user = getCurrentUser();
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new RuntimeException("Inquiry not found"));
+
+        // Verify user owns this inquiry
+        if (!inquiry.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+        // Mark as read by user
+        inquiry.setLastReadAtUser(LocalDateTime.now());
+        inquiryRepository.save(inquiry);
+
+        return toDTOWithLastMessage(inquiry);
+    }
+
+    /**
      * Get messages for a specific inquiry (user access).
      */
     public List<InquiryMessageDTO> getInquiryMessages(Long inquiryId) {
@@ -167,6 +187,20 @@ public class InquiryService {
                 .stream()
                 .map(this::toMessageDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a single inquiry by ID (admin access).
+     */
+    public InquiryDTO getInquiryByIdAdmin(Long inquiryId) {
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new RuntimeException("Inquiry not found"));
+
+        // Mark as read by admin
+        inquiry.setLastReadAtAdmin(LocalDateTime.now());
+        inquiryRepository.save(inquiry);
+
+        return toDTOWithLastMessage(inquiry);
     }
 
     /**
@@ -301,6 +335,24 @@ public class InquiryService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get a single inquiry by ID (agent access).
+     */
+    public InquiryDTO getInquiryByIdAgent(Long inquiryId) {
+        User user = getCurrentUser();
+        Agent agent = agentRepository.findByLinkedUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Agent profile not found"));
+
+        Inquiry inquiry = inquiryRepository.findByIdAndAssignedAgentId(inquiryId, agent.getId())
+                .orElseThrow(() -> new RuntimeException("Inquiry not found or not assigned to you"));
+
+        // Mark as read by agent
+        inquiry.setLastReadAtAdmin(LocalDateTime.now());
+        inquiryRepository.save(inquiry);
+
+        return toDTOWithLastMessage(inquiry);
+    }
+
     // ==================== HELPER METHODS ====================
 
     private User getCurrentUser() {
@@ -350,15 +402,32 @@ public class InquiryService {
     }
 
     private InquiryDTO toDTO(Inquiry inquiry, String lastMessagePreview) {
+        Property property = inquiry.getProperty();
+        Agent agent = inquiry.getAssignedAgent();
+        User user = inquiry.getUser();
+
         return InquiryDTO.builder()
                 .id(inquiry.getId())
-                .userId(inquiry.getUser().getId())
-                .userName(inquiry.getUser().getName())
-                .propertyId(inquiry.getProperty().getId())
-                .propertyTitle(inquiry.getProperty().getTitle())
-                .propertyAddress(inquiry.getProperty().getAddress())
-                .assignedAgentId(inquiry.getAssignedAgent() != null ? inquiry.getAssignedAgent().getId() : null)
-                .assignedAgentName(inquiry.getAssignedAgent() != null ? inquiry.getAssignedAgent().getName() : null)
+                .userId(user.getId())
+                .userName(user.getName())
+                .userEmail(user.getEmail())
+                // Property details
+                .propertyId(property.getId())
+                .propertyTitle(property.getTitle())
+                .propertyAddress(property.getAddress())
+                .propertyImage(property.getImageUrl())
+                .propertyPrice(property.getPrice() != null ? property.getPrice().doubleValue() : null)
+                .propertyBedrooms(property.getBedrooms())
+                .propertyBathrooms(property.getBathrooms())
+                .propertyAreaSqFt(property.getAreaSqFt())
+                .propertyType(property.getType() != null ? property.getType().name() : null)
+                // Agent details
+                .assignedAgentId(agent != null ? agent.getId() : null)
+                .assignedAgentName(agent != null ? agent.getName() : null)
+                .assignedAgentProfileImage(agent != null ? agent.getProfileImageUrl() : null)
+                .assignedAgentPhone(agent != null ? agent.getPhone() : null)
+                .assignedAgentTitle(agent != null ? agent.getTitle() : null)
+                // Inquiry metadata
                 .status(inquiry.getStatus())
                 .lastMessagePreview(lastMessagePreview)
                 .lastMessageAt(inquiry.getLastMessageAt())

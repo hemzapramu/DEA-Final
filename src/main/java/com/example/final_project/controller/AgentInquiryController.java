@@ -33,6 +33,14 @@ public class AgentInquiryController {
     }
 
     /**
+     * Get a single inquiry by ID.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<InquiryDTO> getInquiryById(@PathVariable Long id) {
+        return ResponseEntity.ok(inquiryService.getInquiryByIdAgent(id));
+    }
+
+    /**
      * Get all messages for a specific inquiry.
      */
     @GetMapping("/{id}/messages")

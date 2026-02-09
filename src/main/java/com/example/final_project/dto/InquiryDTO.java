@@ -19,11 +19,26 @@ public class InquiryDTO {
     private Long id;
     private Long userId;
     private String userName;
+    private String userEmail;
+
+    // Property details
     private Long propertyId;
     private String propertyTitle;
     private String propertyAddress;
+    private String propertyImage;
+    private Double propertyPrice;
+    private Integer propertyBedrooms;
+    private Integer propertyBathrooms;
+    private Double propertyAreaSqFt;
+    private String propertyType; // SALE or RENT
+
+    // Assigned agent details
     private Long assignedAgentId;
     private String assignedAgentName;
+    private String assignedAgentProfileImage;
+    private String assignedAgentPhone;
+    private String assignedAgentTitle;
+
     private InquiryStatus status;
     private String lastMessagePreview;
     private LocalDateTime lastMessageAt;

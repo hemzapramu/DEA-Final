@@ -37,6 +37,14 @@ public class InquiryController {
     }
 
     /**
+     * Get a single inquiry by ID (user access).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<InquiryDTO> getInquiryById(@PathVariable Long id) {
+        return ResponseEntity.ok(inquiryService.getInquiryById(id));
+    }
+
+    /**
      * Get all messages for a specific inquiry.
      */
     @GetMapping("/{id}/messages")

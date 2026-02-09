@@ -377,6 +377,130 @@
             window.location.href = '/user-inquiries.html';
         }
 
+        // Get the correct API path based on user role
+        function getMessagesApiPath() {
+            const role = currentUser?.role?.toUpperCase();
+            if (role === 'ADMIN') {
+                return `${API_URL}/admin/inquiries/${inquiryId}/messages`;
+            } else if (role === 'AGENT') {
+                return `${API_URL}/agent/inquiries/${inquiryId}/messages`;
+            }
+            return `${API_URL}/inquiries/${inquiryId}/messages`;
+        }
+
+        // Get the correct send message API path based on user role
+        function getSendMessageApiPath() {
+            const role = currentUser?.role?.toUpperCase();
+            if (role === 'ADMIN') {
+                return `${API_URL}/admin/inquiries/${inquiryId}/reply`;
+            } else if (role === 'AGENT') {
+                return `${API_URL}/agent/inquiries/${inquiryId}/reply`;
+            }
+            return `${API_URL}/inquiries/${inquiryId}/messages`;
+        }
+
+        // Get the correct API path for inquiry details based on user role
+        function getInquiryApiPath() {
+            const role = currentUser?.role?.toUpperCase();
+            if (role === 'ADMIN') {
+                return `${API_URL}/admin/inquiries/${inquiryId}`;
+            } else if (role === 'AGENT') {
+                return `${API_URL}/agent/inquiries/${inquiryId}`;
+            }
+            return `${API_URL}/inquiries/${inquiryId}`;
+        }
+
+        // Store inquiry details
+        let inquiryDetails = null;
+
+        // Load inquiry details
+        async function loadInquiryDetails() {
+            try {
+                const response = await fetch(getInquiryApiPath(), {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to load inquiry details');
+                inquiryDetails = await response.json();
+                updateUI();
+            } catch (error) {
+                console.error('Error loading inquiry details:', error);
+            }
+        }
+
+        // Update UI with inquiry details
+        function updateUI() {
+            if (!inquiryDetails) return;
+
+            const role = currentUser?.role?.toUpperCase();
+            const isAgentOrAdmin = role === 'AGENT' || role === 'ADMIN';
+
+            // Update header - show agent for users, show user for agents/admins
+            const headerName = isAgentOrAdmin ? inquiryDetails.userName : (inquiryDetails.assignedAgentName || 'Unassigned');
+            const headerTitle = isAgentOrAdmin ? 'Customer' : (inquiryDetails.assignedAgentTitle || 'Agent');
+            const headerImage = isAgentOrAdmin
+                ? `https://ui-avatars.com/api/?name=${encodeURIComponent(inquiryDetails.userName)}&background=06f980&color=000`
+                : (inquiryDetails.assignedAgentProfileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(headerName)}&background=06f980&color=000`);
+
+            // Update header elements
+            const headerPhoto = document.querySelector('header .rounded-full[data-alt]');
+            if (headerPhoto) {
+                headerPhoto.style.backgroundImage = `url("${headerImage}")`;
+            }
+            const headerNameEl = document.querySelector('header h3');
+            if (headerNameEl) {
+                headerNameEl.textContent = headerName;
+            }
+            const headerTitleEl = document.querySelector('header h3 + p');
+            if (headerTitleEl) {
+                headerTitleEl.textContent = `${headerTitle} • Online`;
+            }
+
+            // Update property panel
+            const propertyImage = document.querySelector('.w-\\[350px\\] .bg-cover[data-alt]');
+            if (propertyImage && inquiryDetails.propertyImage) {
+                propertyImage.style.backgroundImage = `url("${inquiryDetails.propertyImage}")`;
+            }
+
+            const propertyTitle = document.querySelector('.w-\\[350px\\] h2');
+            if (propertyTitle) {
+                propertyTitle.textContent = inquiryDetails.propertyTitle || 'Property';
+            }
+
+            const propertyAddress = document.querySelector('.w-\\[350px\\] .text-\\[\\#9bbbab\\] p');
+            if (propertyAddress) {
+                propertyAddress.textContent = inquiryDetails.propertyAddress || '';
+            }
+
+            const propertyPrice = document.querySelector('.w-\\[350px\\] .text-3xl');
+            if (propertyPrice && inquiryDetails.propertyPrice) {
+                propertyPrice.textContent = `$${inquiryDetails.propertyPrice.toLocaleString()}`;
+            }
+
+            // Update property specs
+            const specs = document.querySelectorAll('.w-\\[350px\\] .grid .text-lg');
+            if (specs.length >= 4) {
+                specs[0].innerHTML = `<span class="material-symbols-outlined text-primary text-xl" data-icon="bed">bed</span> ${inquiryDetails.propertyBedrooms || 0}`;
+                specs[1].innerHTML = `<span class="material-symbols-outlined text-primary text-xl" data-icon="bathtub">bathtub</span> ${inquiryDetails.propertyBathrooms || 0}`;
+                specs[2].innerHTML = `<span class="material-symbols-outlined text-primary text-xl" data-icon="square_foot">square_foot</span> ${inquiryDetails.propertyAreaSqFt ? inquiryDetails.propertyAreaSqFt.toLocaleString() : 0}`;
+            }
+
+            // Update View Property button
+            const viewPropertyBtn = document.querySelector('.w-\\[350px\\] button');
+            if (viewPropertyBtn && inquiryDetails.propertyId) {
+                viewPropertyBtn.onclick = () => {
+                    window.location.href = `/view-property.html?id=${inquiryDetails.propertyId}`;
+                };
+            }
+
+            // Update back button based on role
+            const backButtons = document.querySelectorAll('a[href="/user-inquiries.html"]');
+            backButtons.forEach(btn => {
+                if (isAgentOrAdmin) {
+                    btn.href = role === 'AGENT' ? '/agent-inquiries.html' : '/admin-inquiries.html';
+                }
+            });
+        }
+
         // Format time
         function formatTime(dateString) {
             const date = new Date(dateString);
@@ -395,10 +519,14 @@
 
         // Render message
         function renderMessage(msg) {
-            const isUser = msg.senderRole === 'USER' || msg.senderId === currentUser?.id;
-            const senderName = msg.senderName || (isUser ? 'You' : 'Agent');
+            // Check if the current user sent this message
+            const isCurrentUser = msg.senderId === currentUser?.id;
+            // Get sender label based on role
+            const roleLabels = { 'ADMIN': 'Admin', 'AGENT': 'Agent', 'USER': 'User', 'SELLER': 'Seller' };
+            const senderRoleLabel = roleLabels[msg.senderRole] || 'User';
+            const senderName = isCurrentUser ? 'You' : (msg.senderName || senderRoleLabel);
 
-            if (isUser) {
+            if (isCurrentUser) {
                 return `
                     <div class="flex items-end gap-3 justify-end self-end max-w-[85%]">
                         <div class="flex flex-col gap-1 items-end">
@@ -475,7 +603,7 @@
             `;
 
             try {
-                const response = await fetch(`${API_URL}/inquiries/${inquiryId}/messages`, {
+                const response = await fetch(getMessagesApiPath(), {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -504,10 +632,11 @@
             if (!text) return;
 
             // Optimistically add message to UI
+            const userRole = currentUser?.role?.toUpperCase() || 'USER';
             const tempMsg = {
                 id: Date.now(),
                 text: text,
-                senderRole: 'USER',
+                senderRole: userRole,
                 senderId: currentUser?.id,
                 senderName: currentUser?.name || 'You',
                 createdAt: new Date().toISOString()
@@ -517,7 +646,7 @@
             textarea.value = '';
 
             try {
-                const response = await fetch(`${API_URL}/inquiries/${inquiryId}/messages`, {
+                const response = await fetch(getSendMessageApiPath(), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -576,6 +705,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadInquiryDetails();
             loadMessages();
             connectWebSocket();
 
